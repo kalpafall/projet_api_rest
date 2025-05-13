@@ -1,8 +1,20 @@
-import os 
+import os
+import psycopg2
+from dotenv import load_dotenv
 
-class Config:
-    SECRET = os.environ.get('SECRET_KEY') or 'dev_secret_key'
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt_secret_key'
-    DEBUG = True
-    # Plus tard DATABASE JWT CONFIGS ETC 
-    JWT_SECRET_KEY = 'super-secret-key'  # 🔐 à changer en production
+load_dotenv()
+
+conn = psycopg2.connect(
+    host=os.getenv("DB_HOST"),
+    database=os.getenv("DB_NAME"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
+    port=os.getenv("DB_PORT")
+)
+
+cur = conn.cursor()
+cur.execute("SELECT version();")
+version = cur.fetchone()
+print("PostgreSQL version:", version)
+cur.close()
+conn.close()
