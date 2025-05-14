@@ -14,8 +14,14 @@ class UserModel:
             print("Erreur lors de la récupération des utilisateurs:", e)
             return []
 
-    
-
+    def get_user_by_id(self, user_id):
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT id, username, email, is_active FROM users WHERE id = %s;", (user_id,))
+                return cur.fetchone()
+        except Exception as e:
+            print("Erreur lors de la récupération de l'utilisateur:", e)
+            return None
     def close(self):
         if self.conn:
             self.conn.close()
