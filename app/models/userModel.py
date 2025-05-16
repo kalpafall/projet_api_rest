@@ -1,5 +1,25 @@
 # usersModel.py
-from config import get_connection
+import psycopg2
+import os
+from dotenv import load_dotenv
+
+def get_connection():
+    """
+    Crée et retourne une connexion PostgreSQL en utilisant psycopg2
+    Les paramètres sont récupérés à partir des variables d'environnement.
+    """
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            port=os.getenv("DB_PORT")
+        )
+        return conn
+    except Exception as e:
+        print("Erreur lors de la connexion à la base de données:", e)
+        return None
 
 class UserModel:
     def __init__(self):
@@ -39,3 +59,8 @@ class UserModel:
     def close(self):
         if self.conn:
             self.conn.close()
+if __name__ == "__main__":
+    user_model = UserModel()
+    users = user_model.get_all_users()
+    print(users)
+    user_model.close()
